@@ -2237,6 +2237,59 @@
                         logging: false,
                         removeContainer: false,
                         imageTimeout: 0,
+                        onclone: function (clonedDoc) {
+                            try {
+                                const clonedContainer = clonedDoc.querySelector(".container");
+                                
+                                // 1. Tính toán cấu trúc trang
+                                const scale = 1.5;
+                                const paddingCanvas = 60;
+                                const canvasWidth = 1200 * scale + paddingCanvas * 2; // 1920
+                                const pagePxOnCanvas = canvasWidth * (297 / 210); // 2715.428
+                                
+                                const elements = clonedContainer.querySelectorAll(
+                                    ".card, .profile-card, .contact-item, .skill-category, .timeline-item, .project-card, .language-item, .qr-code-card"
+                                );
+                                
+                                elements.forEach((el) => {
+                                    const rect = el.getBoundingClientRect();
+                                    const containerRect = clonedContainer.getBoundingClientRect();
+                                    
+                                    // Bỏ qua nếu element bị ẩn hoặc chưa render
+                                    if (rect.height === 0) return;
+                                    
+                                    // elTop và elBottom tính theo DOM pixel (chưa scale, chưa padding canvas)
+                                    const elTopDOM = rect.top - containerRect.top;
+                                    const elBottomDOM = elTopDOM + rect.height;
+                                    
+                                    // Quy đổi sang toạ độ trên Final Canvas
+                                    const elTopCanvas = elTopDOM * scale + paddingCanvas;
+                                    const elBottomCanvas = elBottomDOM * scale + paddingCanvas;
+                                    
+                                    const pageNumber = Math.floor(elTopCanvas / pagePxOnCanvas);
+                                    const bottomPageNumber = Math.floor(elBottomCanvas / pagePxOnCanvas);
+                                    
+                                    // Nếu phần tử bị vắt ngang qua 2 trang, và bản thân nó không dài hơn 1 trang
+                                    if (bottomPageNumber > pageNumber && (elBottomCanvas - elTopCanvas) < pagePxOnCanvas * 0.8) {
+                                        // Tính khoảng cách cần đẩy xuống (theo toạ độ canvas)
+                                        const nextPageTopCanvas = (pageNumber + 1) * pagePxOnCanvas;
+                                        const pushAmountCanvas = nextPageTopCanvas - elTopCanvas;
+                                        
+                                        // Đổi ngược ra DOM pixel để thêm margin
+                                        const pushAmountDOM = pushAmountCanvas / scale;
+                                        
+                                        // Sử dụng clonedDoc.defaultView để tránh lỗi cross-document
+                                        const computedStyle = clonedDoc.defaultView ? clonedDoc.defaultView.getComputedStyle(el) : window.getComputedStyle(el);
+                                        const currentMargin = parseFloat(computedStyle.marginTop) || 0;
+                                        
+                                        // Thêm 40px padding an toàn để phần tử nằm trọn vẹn ở đầu trang mới
+                                        el.style.marginTop = `${currentMargin + pushAmountDOM + 40}px`; 
+                                    }
+                                });
+                            } catch (error) {
+                                console.error("Pagination layout adjustment failed:", error);
+                            }
+                        }
                     })
                         .then((originalCanvas) => {
                             // Tạo canvas mới có padding
