@@ -180,19 +180,19 @@
                 border-radius: 50%;
                 object-fit: cover;
                 margin: 0 auto 20px;
-                border: 4px solid var(--surface-color);
-                box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
-                background: var(--border-color);
+                border: 4px solid rgba(37, 99, 235, 0.2);
+                padding: 4px;
+                background: var(--surface-color);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 color: var(--text-muted);
                 transition: var(--transition);
-                cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path fill="%23ff4d6d" d="M16 28.7c7-4.8 13-11.5 13-15.3 0-4.9-4-8.9-8.9-8.9-1.9 0-3.7.6-5.1 1.7-1.4-1.1-3.2-1.7-5.1-1.7-4.9 0-8.9 4-8.9 8.9 0 3.8 6 10.5 13 15.3z"/></svg>') 16 16, auto;
+                overflow: hidden;
             }
 
             [data-theme="dark"] .avatar {
-                box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
+                border-color: rgba(56, 189, 248, 0.2);
             }
 
             .name {
@@ -998,8 +998,9 @@
                     margin: 0;
                     width: 120px;
                     height: 120px;
-                    border-color: transparent !important;
-                    box-shadow: none !important;
+                    border-radius: 50% !important;
+                    border: 4px solid #000 !important;
+                    box-shadow: 0 0 0 2px #fff !important;
                 }
                 .contact-list {
                     margin-top: 0;
@@ -1039,27 +1040,34 @@
                     border-color: #000 !important;
                 }
                 /* QR Code Print Styles */
-                .card[style*="margin-top: 30px; text-align: center;"] {
+                .qr-code-card {
                     display: block !important;
                     page-break-inside: avoid !important;
                     margin-top: 20px !important;
                     text-align: center !important;
+                    border: 2px solid #000 !important;
+                    padding: 15px !important;
+                    background: white !important;
                 }
-                .card[style*="margin-top: 30px; text-align: center;"] img {
+                .qr-code-img {
                     display: block !important;
                     width: 120px !important;
                     height: 120px !important;
                     margin: 0 auto !important;
                     border: 1px solid #000 !important;
                     background: white !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
                 }
-                .card[style*="margin-top: 30px; text-align: center;"] div[style*="display: inline-block"] {
+                .qr-code-container {
                     display: block !important;
                     background: white !important;
-                    border: 1px solid #000 !important;
-                    padding: 10px !important;
+                    border: none !important;
+                    padding: 0 !important;
                     margin: 0 auto !important;
-                    width: fit-content !important;
+                    width: auto !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
                 }
                 * {
                     color: black !important;
@@ -1319,15 +1327,15 @@
                 </div>
 
                 <!-- QR Code -->
-                <div class="card fade-in" style="margin-top: 30px; text-align: center;">
-                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
-                        Quét mã QR để xem CV online
-                    </h3>
-                    <div style="display: inline-block; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
-                        <img 
-                            src="data:image/png;base64,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" 
-                            alt="QR Code for CV" 
-                            style="width: 150px; height: 150px; display: block;"
+                <div class="card fade-in qr-code-card" style="margin-top: 30px; text-align: center;">
+                    <div class="fade-in qr-code-card">
+                        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
+                            Quét mã QR để xem CV online
+                        </h3>
+                        <img
+                            style="width: 165px; height: 165px; object-fit: cover; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);"
+                            src="data:image/png;base64,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" 
+                            alt="QR Code for CV"
                         />
                     </div>
                 </div>
@@ -2137,11 +2145,18 @@
 
                 // Tạm thời hiển thị tất cả nội dung ẩn do lazy loading
                 const hiddenElements = document.querySelectorAll(
-                    ".fade-in:not(.appear)",
+                    ".fade-in",
                 )
                 hiddenElements.forEach((el) => {
+                    el.style.transition = "none"
                     el.classList.add("appear")
                 })
+                
+                // Hiển thị QR Code nếu đang bị ẩn
+                const qrCard = document.querySelector(".qr-code-card")
+                if (qrCard) {
+                    qrCard.style.display = "block"
+                }
 
                 // Tạm thời hiển thị tất cả các skill bar
                 const skillBars = document.querySelectorAll(".skill-bar")
@@ -2175,36 +2190,46 @@
                     // Lấy kích thước thực tế của toàn bộ container
                     const container = document.querySelector(".container")
 
-                    // Đảm bảo lấy được toàn bộ chiều cao thực tế
+                    // Thêm padding bottom để đảm bảo không bị cụt nội dung
+                    container.style.paddingBottom = "50px";
+
+                    // Đảm bảo lấy được toàn bộ chiều cao thực tế sau khi thêm padding
                     const containerHeight = Math.max(
                         container.scrollHeight,
                         container.offsetHeight,
                         container.clientHeight,
                         document.body.scrollHeight,
                         document.body.offsetHeight,
-                    )
-
-                    // Thêm padding bottom để đảm bảo không bị cụt nội dung
-                    // container.style.paddingBottom = '1px';
+                    );
 
                     // Sử dụng html2canvas để chụp toàn bộ trang
                     html2canvas(container, {
                         scale: 1.5, // Giảm scale từ 2x xuống 1.5x để giảm kích thước file
                         useCORS: true,
-                        allowTaint: true,
+                        allowTaint: false,
                         backgroundColor:
                             currentTheme === "dark" ? "#1e293b" : "#ffffff",
-                        width: container.scrollWidth,
-                        height: containerHeight + 10, // Thêm thêm chiều cao để đảm bảo không bị cụt
+                        width: container.offsetWidth,
+                        height: containerHeight,
                         scrollX: 0,
                         scrollY: 0,
-                        windowWidth: container.scrollWidth + 100,
-                        windowHeight: containerHeight + 100,
+                        windowWidth: container.offsetWidth,
+                        windowHeight: containerHeight,
                         logging: false,
                         removeContainer: false,
                         imageTimeout: 0,
                     })
-                        .then((canvas) => {
+                        .then((originalCanvas) => {
+                            // Tạo canvas mới có padding
+                            const padding = 60; // 40px * scale 1.5
+                            const canvas = document.createElement("canvas");
+                            canvas.width = originalCanvas.width + padding * 2;
+                            canvas.height = originalCanvas.height + padding * 2;
+                            const ctx = canvas.getContext("2d");
+                            ctx.fillStyle = currentTheme === "dark" ? "#1e293b" : "#ffffff";
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            ctx.drawImage(originalCanvas, padding, padding);
+
                             // Khôi phục padding
                             container.style.paddingBottom = ""
 
@@ -2216,6 +2241,11 @@
                             // Khôi phục các element bị ẩn
                             elementsToHide.forEach((el) => {
                                 if (el) el.style.display = ""
+                            })
+                            
+                            // Khôi phục transition
+                            hiddenElements.forEach((el) => {
+                                el.style.transition = ""
                             })
 
                             // Khôi phục theme
@@ -2727,11 +2757,18 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
 
                 // Tạm thời hiển thị tất cả nội dung ẩn do lazy loading
                 const hiddenElements = document.querySelectorAll(
-                    ".fade-in:not(.appear)",
+                    ".fade-in",
                 )
                 hiddenElements.forEach((el) => {
+                    el.style.transition = "none"
                     el.classList.add("appear")
                 })
+
+                // Hiển thị QR Code nếu đang bị ẩn
+                const qrCard = document.querySelector(".qr-code-card")
+                if (qrCard) {
+                    qrCard.style.display = "block"
+                }
 
                 // Tạm thời hiển thị tất cả các skill bar
                 const skillBars = document.querySelectorAll(".skill-bar")
@@ -2765,6 +2802,9 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                     // Lấy kích thước thực tế của toàn bộ container
                     const container = document.querySelector(".container")
 
+                    // Thêm padding bottom để đảm bảo không bị cụt nội dung
+                    container.style.paddingBottom = "50px"
+
                     // Đảm bảo lấy được toàn bộ chiều cao thực tế
                     const containerHeight = Math.max(
                         container.scrollHeight,
@@ -2774,27 +2814,34 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                         document.body.offsetHeight,
                     )
 
-                    // Thêm padding bottom để đảm bảo không bị cụt nội dung
-                    container.style.paddingBottom = "50px"
-
                     // Sử dụng html2canvas để chụp toàn bộ trang
                     html2canvas(container, {
                         scale: 2, // Scale cao hơn cho ảnh chất lượng tốt
                         useCORS: true,
-                        allowTaint: true,
+                        allowTaint: false,
                         backgroundColor:
                             currentTheme === "dark" ? "#1e293b" : "#ffffff",
-                        width: container.scrollWidth,
-                        height: containerHeight + 100,
+                        width: container.offsetWidth,
+                        height: containerHeight,
                         scrollX: 0,
                         scrollY: 0,
-                        windowWidth: container.scrollWidth + 100,
-                        windowHeight: containerHeight + 100,
+                        windowWidth: container.offsetWidth,
+                        windowHeight: containerHeight,
                         logging: false,
                         removeContainer: false,
                         imageTimeout: 0,
                     })
-                        .then((canvas) => {
+                        .then((originalCanvas) => {
+                            // Tạo canvas mới có padding
+                            const padding = 80; // 40px * scale 2
+                            const canvas = document.createElement("canvas");
+                            canvas.width = originalCanvas.width + padding * 2;
+                            canvas.height = originalCanvas.height + padding * 2;
+                            const ctx = canvas.getContext("2d");
+                            ctx.fillStyle = currentTheme === "dark" ? "#1e293b" : "#ffffff";
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            ctx.drawImage(originalCanvas, padding, padding);
+
                             // Khôi phục padding
                             container.style.paddingBottom = ""
 
@@ -2806,6 +2853,11 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                             // Khôi phục các element bị ẩn
                             elementsToHide.forEach((el) => {
                                 if (el) el.style.display = ""
+                            })
+                            
+                            // Khôi phục transition
+                            hiddenElements.forEach((el) => {
+                                el.style.transition = ""
                             })
 
                             // Khôi phục theme
