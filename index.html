@@ -3392,11 +3392,42 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                 title: "Self Control - Laura Branigan",
                 performer: "Laura Branigan",
                 link: 'https://www.youtube.com/watch?v=RP0_8J7uxhs'
+            },
+            {
+                id: 'D00M2KZH1J0',
+                title: "Out of Touch - Daryl Hall & John Oates",
+                performer: "Daryl Hall & John Oates",
+                link: 'https://www.youtube.com/watch?v=D00M2KZH1J0'
             }
         ];
 
         // Select a random track
-        const selectedTrack = musicTracks[Math.floor(Math.random() * musicTracks.length)];
+        let currentTrack = musicTracks[Math.floor(Math.random() * musicTracks.length)];
+
+        // Function to update track credit info in UI
+        function updateTrackInfo(track) {
+            const infoEl = document.getElementById("youtube-music-info");
+            if (infoEl) {
+                infoEl.innerHTML = `<span>Bài hát: <strong>${track.title}</strong> (${track.performer}) | Nguồn: <a href="${track.link}" target="_blank" rel="noopener noreferrer">YouTube</a></span>`;
+            }
+        }
+
+        // Function to play next random track (different from current one if possible)
+        function playNextRandomTrack() {
+            let nextTrack;
+            if (musicTracks.length > 1) {
+                const otherTracks = musicTracks.filter(track => track.id !== currentTrack.id);
+                nextTrack = otherTracks[Math.floor(Math.random() * otherTracks.length)];
+            } else {
+                nextTrack = musicTracks[0];
+            }
+            currentTrack = nextTrack;
+            
+            if (player && typeof player.loadVideoById === 'function') {
+                player.loadVideoById(currentTrack.id);
+                updateTrackInfo(currentTrack);
+            }
+        }
 
         // Load YouTube Iframe Player API asynchronously
         var tag = document.createElement('script');
@@ -3408,11 +3439,9 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
             player = new YT.Player('yt-player', {
                 height: '100%',
                 width: '100%',
-                videoId: selectedTrack.id,
+                videoId: currentTrack.id,
                 playerVars: {
                     'playsinline': 1,
-                    'loop': 1,
-                    'playlist': selectedTrack.id,
                     'controls': 1,
                     'showinfo': 0,
                     'rel': 0
@@ -3424,10 +3453,7 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
             });
 
             // Set track credit info dynamically
-            const infoEl = document.getElementById("youtube-music-info");
-            if (infoEl) {
-                infoEl.innerHTML = `<span>Bài hát: <strong>${selectedTrack.title}</strong> (${selectedTrack.performer}) | Nguồn: <a href="${selectedTrack.link}" target="_blank" rel="noopener noreferrer">YouTube</a></span>`;
-            }
+            updateTrackInfo(currentTrack);
         }
 
         function onPlayerReady(event) {
@@ -3446,6 +3472,10 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
             } else {
                 btn.classList.remove("fab-music-playing");
                 btn.title = "Phát nhạc nền";
+            }
+
+            if (event.data === YT.PlayerState.ENDED) {
+                playNextRandomTrack();
             }
         }
 
