@@ -489,6 +489,15 @@
             flex-direction: column;
             gap: 15px;
             z-index: 100;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fab-container.scrolled-down {
+            opacity: 0.35;
+        }
+
+        .fab-container:hover {
+            opacity: 1 !important;
         }
 
         .fab {
@@ -1193,42 +1202,111 @@
         /* ===== YOUTUBE MUSIC ===== */
         .youtube-music-container {
             display: flex;
-            justify-content: center;
-            margin-top: 30px;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
             margin-bottom: 30px;
             padding: 0 15px;
             width: 100%;
+            position: relative;
         }
 
-        .youtube-music-card {
+        /* Retro TV Antenna */
+        .retro-tv-antenna {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            width: 80px;
+            height: 30px;
+            position: relative;
+            margin-bottom: -2px;
+            z-index: 2;
+        }
+        .antenna-rod {
+            width: 3px;
+            height: 30px;
+            background-color: #64748b;
+            border-radius: 2px;
+            position: absolute;
+            bottom: 2px;
+        }
+        .antenna-rod.left {
+            transform: rotate(-30deg);
+            transform-origin: bottom center;
+            left: 25px;
+        }
+        .antenna-rod.right {
+            transform: rotate(30deg);
+            transform-origin: bottom center;
+            right: 25px;
+        }
+        .antenna-rod::after {
+            content: "";
+            position: absolute;
+            top: -4px;
+            left: -2px;
+            width: 7px;
+            height: 7px;
+            background-color: #475569;
+            border-radius: 50%;
+        }
+        .antenna-base {
+            width: 16px;
+            height: 6px;
+            background-color: #334155;
+            border-radius: 4px 4px 0 0;
+            z-index: 3;
+        }
+
+        /* Retro TV Cabinet */
+        .retro-tv-cabinet {
+            display: flex;
             width: 100%;
-            max-width: 420px;
-            padding: 20px !important;
-            background-color: var(--surface-color);
-            border-radius: var(--radius);
-            box-shadow: var(--card-shadow);
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
+            max-width: 440px;
+            background: #3e2723; /* Classic retro wood finish */
+            border: 8px solid #5d4037;
+            border-radius: 18px;
+            box-shadow: 
+                0 10px 25px rgba(0, 0, 0, 0.4),
+                inset 0 2px 5px rgba(255, 255, 255, 0.2);
+            padding: 12px;
             gap: 12px;
-            transition: var(--transition);
+            box-sizing: border-box;
+            z-index: 1;
         }
 
-        .youtube-music-card-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--text-main);
+        [data-theme="dark"] .retro-tv-cabinet {
+            background: #27272a; /* Zinc gray for dark mode tech vibe */
+            border-color: #3f3f46;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Screen Wrapper (CRT tube style bezel) */
+        .retro-tv-screen-wrapper {
+            flex: 1;
+            background: #1e1e1e;
+            border: 6px solid #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+        /* Screen overlay for classic glass CRT reflection curve */
+        .retro-tv-screen-wrapper::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 50%);
+            pointer-events: none;
+            z-index: 2;
         }
 
         .youtube-music-iframe-wrapper {
-            position: relative;
             width: 100%;
-            height: 220px;
-            border-radius: 10px;
-            overflow: hidden;
+            height: 180px; /* Highly compact! */
             background-color: #000;
         }
 
@@ -1238,23 +1316,107 @@
             border: 0;
         }
 
+        /* TV Control Panel */
+        .retro-tv-controls {
+            width: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            padding: 5px 0;
+            background: #4e342e;
+            border-radius: 8px;
+            border: 2px solid #3e2723;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        [data-theme="dark"] .retro-tv-controls {
+            background: #18181b;
+            border-color: #09090b;
+        }
+
+        .retro-tv-knob {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            border: 2px solid #5d4037;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+            cursor: pointer;
+        }
+        [data-theme="dark"] .retro-tv-knob {
+            border-color: #3f3f46;
+        }
+        .retro-tv-knob::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 10px;
+            background: #94a3b8;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .retro-tv-speaker {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 32px;
+            margin-top: 5px;
+        }
+        .retro-tv-speaker span {
+            display: block;
+            height: 3px;
+            background: #1a1a1a;
+            border-radius: 2px;
+            opacity: 0.8;
+        }
+
+        /* Retro TV Legs */
+        .retro-tv-legs {
+            display: flex;
+            justify-content: space-between;
+            width: 320px;
+            height: 10px;
+            margin-top: -2px;
+        }
+        .retro-tv-leg {
+            width: 12px;
+            height: 12px;
+            background: #5d4037;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        .retro-tv-leg.left {
+            transform: skewX(-15deg);
+            margin-left: 30px;
+        }
+        .retro-tv-leg.right {
+            transform: skewX(15deg);
+            margin-right: 30px;
+        }
+        [data-theme="dark"] .retro-tv-leg {
+            background: #3f3f46;
+        }
+
         .youtube-music-info {
             text-align: center;
             font-size: 0.85rem;
             color: var(--text-muted);
+            margin-top: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
             transition: var(--transition);
         }
-
         .youtube-music-info a {
             color: var(--primary-color);
             font-weight: 500;
             text-decoration: none;
         }
-
         .youtube-music-info a:hover {
             text-decoration: underline;
         }
@@ -1388,7 +1550,7 @@
             </p>
             <div class="export-dialog-buttons" style="flex-direction: column; gap: 10px; width: 100%;">
                 <button class="export-dialog-btn export-dialog-btn-primary" id="music-accept-btn" style="width: 100%; padding: 14px;">
-                    🎶 Thưởng thức
+                    🎹 Thưởng thức
                 </button>
                 <button class="export-dialog-btn export-dialog-btn-secondary" id="music-decline-btn" style="width: 100%; padding: 12px; border: none; background: transparent; color: var(--text-muted);">
                     Để sau 🎻
@@ -2009,26 +2171,48 @@
         </div>
     </div>
 
-    <!-- YouTube Music Widget Container -->
+    <!-- YouTube Music Widget Container (Retro TV Style) -->
     <div class="youtube-music-container" id="youtube-music-container">
-        <div class="youtube-music-card">
-            <div class="youtube-music-card-header">
-                <span class="music-icon-header">🎵</span>
-                <span class="music-title-header">Nhạc nền thư giãn</span>
+        <!-- Retro TV Antenna -->
+        <div class="retro-tv-antenna">
+            <div class="antenna-rod left"></div>
+            <div class="antenna-rod right"></div>
+            <div class="antenna-base"></div>
+        </div>
+        <!-- Retro TV Cabinet -->
+        <div class="retro-tv-cabinet">
+            <!-- TV Screen Wrapper -->
+            <div class="retro-tv-screen-wrapper">
+                <div class="youtube-music-iframe-wrapper">
+                    <div id="yt-player"></div>
+                </div>
             </div>
-            <div class="youtube-music-iframe-wrapper">
-                <div id="yt-player"></div>
-            </div>
-            <div class="youtube-music-info" id="youtube-music-info">
-                <span>Bài hát: <strong>Mariage d'Amour</strong> - Paul de Senneville | Nguồn: <a href="https://www.youtube.com/watch?v=FoCG-WNsZio" target="_blank" rel="noopener noreferrer">Jacob's Piano (YouTube)</a></span>
+            <!-- TV Control Panel -->
+            <div class="retro-tv-controls">
+                <div class="retro-tv-knob dial-1"></div>
+                <div class="retro-tv-knob dial-2"></div>
+                <div class="retro-tv-speaker">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
         </div>
+        <!-- Retro TV Legs -->
+        <div class="retro-tv-legs">
+            <div class="retro-tv-leg left"></div>
+            <div class="retro-tv-leg right"></div>
+        </div>
+        <!-- Credit Info -->
+        <div class="youtube-music-info" id="youtube-music-info"></div>
     </div>
 
     <!-- ==================== FLOATING ACTIONS ==================== -->
     <div class="fab-container">
         <button class="fab" id="music-toggle-btn" title="Bật nhạc nền">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <svg viewBox="0 0 24 24">
                 <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
             </svg>
         </button>
@@ -3129,13 +3313,29 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                     })
             })
 
-        // Scroll to Top Logic
+        // Scroll to Top Logic and FAB opacity on scroll down/up
         const scrollTopBtn = document.getElementById("scroll-top-btn")
+        let lastScrollTop = 0;
         window.addEventListener("scroll", () => {
+            // Scroll to Top Button Visibility
             if (window.scrollY > 400) {
                 scrollTopBtn.style.display = "flex"
             } else {
                 scrollTopBtn.style.display = "none"
+            }
+
+            // FAB Container Opacity Logic
+            const fabContainer = document.querySelector(".fab-container");
+            if (fabContainer) {
+                const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                if (currentScroll > lastScrollTop && currentScroll > 100) {
+                    // Scrolling down - make slightly transparent
+                    fabContainer.classList.add("scrolled-down");
+                } else {
+                    // Scrolling up - make fully visible
+                    fabContainer.classList.remove("scrolled-down");
+                }
+                lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
             }
         })
         scrollTopBtn.addEventListener("click", () => {
@@ -3179,6 +3379,25 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
         var player;
         var playPending = false;
 
+        // Playlist data
+        const musicTracks = [
+            {
+                id: 'FoCG-WNsZio',
+                title: "Mariage d'Amour - Paul de Senneville",
+                performer: "Jacob's Piano",
+                link: 'https://www.youtube.com/watch?v=FoCG-WNsZio'
+            },
+            {
+                id: 'RP0_8J7uxhs',
+                title: "Self Control - Laura Branigan",
+                performer: "Laura Branigan",
+                link: 'https://www.youtube.com/watch?v=RP0_8J7uxhs'
+            }
+        ];
+
+        // Select a random track
+        const selectedTrack = musicTracks[Math.floor(Math.random() * musicTracks.length)];
+
         // Load YouTube Iframe Player API asynchronously
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
@@ -3189,11 +3408,11 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
             player = new YT.Player('yt-player', {
                 height: '100%',
                 width: '100%',
-                videoId: 'FoCG-WNsZio',
+                videoId: selectedTrack.id,
                 playerVars: {
                     'playsinline': 1,
                     'loop': 1,
-                    'playlist': 'FoCG-WNsZio',
+                    'playlist': selectedTrack.id,
                     'controls': 1,
                     'showinfo': 0,
                     'rel': 0
@@ -3203,6 +3422,12 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                     'onStateChange': onPlayerStateChange
                 }
             });
+
+            // Set track credit info dynamically
+            const infoEl = document.getElementById("youtube-music-info");
+            if (infoEl) {
+                infoEl.innerHTML = `<span>Bài hát: <strong>${selectedTrack.title}</strong> (${selectedTrack.performer}) | Nguồn: <a href="${selectedTrack.link}" target="_blank" rel="noopener noreferrer">YouTube</a></span>`;
+            }
         }
 
         function onPlayerReady(event) {
