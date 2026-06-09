@@ -1189,6 +1189,105 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* ===== YOUTUBE MUSIC ===== */
+        .youtube-music-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding: 0 15px;
+            width: 100%;
+        }
+
+        .youtube-music-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px !important;
+            background-color: var(--surface-color);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .youtube-music-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .youtube-music-iframe-wrapper {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .youtube-music-iframe-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .youtube-music-info {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .youtube-music-info a {
+            color: var(--primary-color);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .youtube-music-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* FAB music playing animation */
+        .fab-music-playing {
+            background: var(--primary-gradient) !important;
+            color: white !important;
+            border-color: transparent !important;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4) !important;
+        }
+
+        .fab-music-playing svg {
+            animation: pulse-music 1.2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-music {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.15) rotate(15deg);
+            }
+        }
+
+        /* Print exclusions for music elements */
+        @media print {
+            .youtube-music-container,
+            #music-toggle-btn,
+            #music-welcome-dialog {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -1275,6 +1374,25 @@
 
             <div class="ai-chat-close-btn" onclick="closeAIChat()" title="Đóng">
                 ×
+            </div>
+        </div>
+    </div>
+
+    <!-- Music Welcome Dialog -->
+    <div class="export-dialog" id="music-welcome-dialog">
+        <div class="export-dialog-content" style="max-width: 420px; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 15px;">🎵</div>
+            <h3 class="export-dialog-title" style="margin-bottom: 10px;">Chào mừng bạn ghé thăm!</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6;">
+                Mời bạn thưởng thức chút âm nhạc thư giãn tinh thần trong lúc xem CV nhé.
+            </p>
+            <div class="export-dialog-buttons" style="flex-direction: column; gap: 10px; width: 100%;">
+                <button class="export-dialog-btn export-dialog-btn-primary" id="music-accept-btn" style="width: 100%; padding: 14px;">
+                    🎶 Thưởng thức
+                </button>
+                <button class="export-dialog-btn export-dialog-btn-secondary" id="music-decline-btn" style="width: 100%; padding: 12px; border: none; background: transparent; color: var(--text-muted);">
+                    Để sau 🎻
+                </button>
             </div>
         </div>
     </div>
@@ -1891,8 +2009,29 @@
         </div>
     </div>
 
+    <!-- YouTube Music Widget Container -->
+    <div class="youtube-music-container" id="youtube-music-container">
+        <div class="youtube-music-card">
+            <div class="youtube-music-card-header">
+                <span class="music-icon-header">🎵</span>
+                <span class="music-title-header">Nhạc nền thư giãn</span>
+            </div>
+            <div class="youtube-music-iframe-wrapper">
+                <div id="yt-player"></div>
+            </div>
+            <div class="youtube-music-info" id="youtube-music-info">
+                <span>Bài hát: <strong>Mariage d'Amour</strong> - Paul de Senneville | Nguồn: <a href="https://www.youtube.com/watch?v=FoCG-WNsZio" target="_blank" rel="noopener noreferrer">Jacob's Piano (YouTube)</a></span>
+            </div>
+        </div>
+    </div>
+
     <!-- ==================== FLOATING ACTIONS ==================== -->
     <div class="fab-container">
+        <button class="fab" id="music-toggle-btn" title="Bật nhạc nền">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+        </button>
         <button class="fab" id="theme-toggle" title="Giao diện Sáng/Tối">
             <svg viewBox="0 0 24 24">
                 <path
@@ -2121,6 +2260,8 @@
             const elementsToHide = [
                 document.querySelector(".translate-widget"),
                 document.querySelector(".fab-container"),
+                document.querySelector("#youtube-music-container"),
+                document.querySelector("#music-welcome-dialog"),
             ]
 
             elementsToHide.forEach((el) => {
@@ -2806,6 +2947,8 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
             const elementsToHide = [
                 document.querySelector(".translate-widget"),
                 document.querySelector(".fab-container"),
+                document.querySelector("#youtube-music-container"),
+                document.querySelector("#music-welcome-dialog"),
             ]
 
             elementsToHide.forEach((el) => {
@@ -3031,6 +3174,114 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
         document.querySelectorAll(".fade-in").forEach((el) => {
             observer.observe(el)
         })
+
+        // ==================== YOUTUBE BACKGROUND MUSIC ====================
+        var player;
+        var playPending = false;
+
+        // Load YouTube Iframe Player API asynchronously
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        window.onYouTubeIframeAPIReady = function() {
+            player = new YT.Player('yt-player', {
+                height: '100%',
+                width: '100%',
+                videoId: 'FoCG-WNsZio',
+                playerVars: {
+                    'playsinline': 1,
+                    'loop': 1,
+                    'playlist': 'FoCG-WNsZio',
+                    'controls': 1,
+                    'showinfo': 0,
+                    'rel': 0
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            if (playPending) {
+                event.target.playVideo();
+                playPending = false;
+            }
+        }
+
+        function onPlayerStateChange(event) {
+            const btn = document.getElementById("music-toggle-btn");
+            if (!btn) return;
+            if (event.data === YT.PlayerState.PLAYING) {
+                btn.classList.add("fab-music-playing");
+                btn.title = "Tạm dừng nhạc nền";
+            } else {
+                btn.classList.remove("fab-music-playing");
+                btn.title = "Phát nhạc nền";
+            }
+        }
+
+        function toggleMusic() {
+            if (!player || typeof player.getPlayerState !== 'function') {
+                playPending = !playPending;
+                if (playPending) {
+                    showToast("Đang tải nhạc, vui lòng chờ...");
+                }
+                return;
+            }
+            
+            const state = player.getPlayerState();
+            if (state === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
+        }
+
+        // Music Welcome Dialog Logic
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const dialog = document.getElementById("music-welcome-dialog");
+                if (dialog) dialog.classList.add("show");
+            }, 1500);
+
+            // Accept button
+            const acceptBtn = document.getElementById("music-accept-btn");
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', () => {
+                    closeMusicWelcomeDialog();
+                    playPending = true;
+                    if (player && typeof player.playVideo === 'function') {
+                        player.playVideo();
+                        playPending = false;
+                    } else {
+                        showToast("Đang tải nhạc, vui lòng chờ...");
+                    }
+                });
+            }
+
+            // Decline button
+            const declineBtn = document.getElementById("music-decline-btn");
+            if (declineBtn) {
+                declineBtn.addEventListener('click', () => {
+                    closeMusicWelcomeDialog();
+                });
+            }
+
+            // Music Toggle Button
+            const toggleBtn = document.getElementById("music-toggle-btn");
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', toggleMusic);
+            }
+        });
+
+        function closeMusicWelcomeDialog() {
+            const dialog = document.getElementById("music-welcome-dialog");
+            if (dialog) dialog.classList.remove("show");
+        }
 
     </script>
 </body>
