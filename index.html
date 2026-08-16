@@ -2142,134 +2142,6 @@
                 </div>
             </div>
 
-            <!-- Problem Solving -->
-            <div class="card fade-in" style="margin-top: 30px">
-                <h2 class="section-title">Thách thức & Giải pháp</h2>
-                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">
-                    Mỗi mục dưới đây theo cấu trúc: <strong>Vấn đề → Cách xử lý → Kết quả</strong>.
-                </p>
-
-                <div class="achievement" style="margin-top: 0">
-                    <strong>⚡ API chậm khi tải cao, DB gần chạm ngưỡng</strong>
-                    <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
-                        Phân tích truy vấn nóng thay vì scale máy chủ → áp
-                        Redis cache-aside, indexing/partitioning MySQL, tách
-                        đọc qua HA replica.
-                        <br /><strong style="color: var(--primary-color)">→ DB load giảm 60%, hệ thống ~10 triệu
-                            request/ngày ổn định.</strong>
-                    </div>
-                </div>
-
-                <div class="achievement">
-                    <strong>🐢 Release hay trễ, lỗi lọt production</strong>
-                    <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
-                        Nguyên nhân gốc là kiểm thử thủ công không theo kịp →
-                        chuẩn hóa CI/CD, checklist release, đào tạo 4
-                        Automation Tester theo lộ trình Playwright.
-                        <br /><strong style="color: var(--primary-color)">→ Tỷ lệ chậm task từ ~30% xuống dưới 10%,
-                            giảm rollback.</strong>
-                    </div>
-                </div>
-
-                <div class="achievement">
-                    <strong>📹 Ứng dụng camera</strong>
-                    <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
-                        Ứng dụng AI object detection trên luồng camera: phát
-                        hiện trẻ tỉnh dậy, cảnh báo khi đối tượng vượt vạch ảo
-                        vẽ trên màn hình, gắn khung bám theo đối tượng khi di
-                        chuyển.
-                        <br /><strong style="color: var(--primary-color)">→ Chuyển từ "ngồi canh" sang nhận cảnh báo
-                            theo sự kiện.</strong>
-                    </div>
-                </div>
-
-                <div class="achievement">
-                    <strong>📊 Báo cáo thủ công, mỗi lần hỏi số là mỗi lần export tay</strong>
-                    <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
-                        Dùng AI dựng nhanh các dashboard nhỏ theo nhu cầu
-                        từng nhóm: filter nhanh, tổng hợp theo chiều dữ liệu,
-                        xuất thẳng báo cáo Excel.
-                        <br /><strong style="color: var(--primary-color)">→ Rút ngắn vòng lặp "hỏi số – trả số" từ
-                            hàng giờ xuống vài phút.</strong>
-                    </div>
-                </div>
-
-                <div class="achievement">
-                    <strong>🔐 App ký số USB Token quá nặng, thư viện đã lỗi thời</strong>
-                    <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
-                        Bản Electron ban đầu tiêu tốn nhiều tài nguyên máy trạm và phụ
-                        thuộc các thư viện cũ không còn được bảo trì → rủi ro bảo mật và
-                        khó nâng cấp. Tôi <strong>refactor sang Go</strong>: biên dịch ra
-                        một file thực thi gọn, không kéo theo cả runtime chronium, giao
-                        tiếp thiết bị ký số qua thư viện vẫn còn được maintain.
-                        <br /><strong style="color: var(--primary-color)">→ Ứng dụng nhẹ hơn, khởi động nhanh hơn,
-                            triển khai và cập nhật đơn giản hơn cho người dùng cuối.</strong>
-                    </div>
-                </div>
-
-                <div class="achievement">
-                    <strong>🏗️ Monolith khiến mọi thay đổi nhỏ đều rủi ro toàn hệ thống</strong>
-                    <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
-                        Sửa một chức năng phải hồi quy cả hệ thống, tốn nhân lực test và
-                        lập trình, chất lượng khó kiểm soát, và scale thì phải nhân bản cả
-                        khối. Tôi <strong>tách dần sang microservice</strong> theo luồng
-                        nghiệp vụ, cô lập phạm vi ảnh hưởng của mỗi lần nâng cấp.
-                        <br /><strong style="color: var(--primary-color)">→ Bảo trì/nâng cấp không còn kéo theo cả hệ
-                            thống, scale đúng service đang nghẽn thay vì scale tất cả.</strong>
-                    </div>
-                </div>
-
-                <div class="achievement">
-                    <strong>💸 Duy trì song song hệ thống cũ và mới quá tốn kém</strong>
-                    <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
-                        Hai môi trường, hai codebase, hai đội vận hành. Tôi thực hiện
-                        <strong>archive &amp; migration theo hướng ghi dữ liệu song song</strong>:
-                        hệ thống mới nhận dữ liệu song song với hệ thống cũ cho tới khi đối
-                        soát khớp, rồi mới <strong>chuyển hướng dịch vụ</strong> sang bản
-                        mới và ngừng bản cũ.
-                        <br /><strong style="color: var(--primary-color)">→ Chuyển đổi không gián đoạn dịch vụ, gỡ
-                            được chi phí duy trì hai môi trường, thống nhất một codebase
-                            duy nhất.</strong>
-                    </div>
-                </div>
-
-                <div class="achievement">
-                    <strong>🛡️ Lỗ hổng chỉ được phát hiện khi có đợt pentest</strong>
-                    <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
-                        Tham gia <strong>xử lý các phát hiện từ pentest</strong>: phân tích
-                        nguyên nhân gốc của từng lỗ hổng, vá và kiểm chứng lại. Quan trọng
-                        hơn, tôi đưa việc rà soát vào <strong>thói quen thường xuyên</strong>
-                        — chủ động kiểm tra, soi lại các điểm tương tự trên toàn hệ thống và
-                        đề xuất cải tiến trước khi bị chỉ ra.
-                        <br /><strong style="color: var(--primary-color)">→ Chuyển từ "vá khi bị phát hiện" sang rà
-                            soát chủ động, đảm bảo tuân thủ yêu cầu an toàn thông tin.</strong>
-                    </div>
-                </div>
-
-                <div class="achievement">
-                    <strong>🔁 Team làm việc rời rạc, sai sót cũ lặp lại</strong>
-                    <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
-                        Tôi <strong>đào tạo và áp dụng Scrum</strong> cho đội — chọn Scrum
-                        vì hợp với nhịp thay đổi của dự án. Sprint rõ mục tiêu, daily gỡ
-                        vướng sớm, và <strong>retrospective</strong> để mỗi vấn đề đã xảy
-                        ra đều trở thành một điều chỉnh cụ thể cho sprint sau.
-                        <br /><strong style="color: var(--primary-color)">→ Tiến độ dự đoán được hơn, mỗi thành viên
-                            có đường phát triển rõ ràng, sai sót cũ không tái diễn.</strong>
-                    </div>
-                </div>
-
-                <div class="achievement">
-                    <strong>🧠 Tri thức nằm trong đầu vài người, onboard chậm</strong>
-                    <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
-                        Xây trợ lý hỏi–đáp nội bộ theo kiến trúc RAG: n8n
-                        điều phối luồng, tài liệu được chunk + embedding lưu
-                        vào Vector DB, LLM trả lời kèm trích dẫn nguồn.
-                        <br /><strong style="color: var(--primary-color)">→ Người mới tự tra cứu được, giảm thời gian
-                            hỏi lại đội ngũ.</strong>
-                    </div>
-                </div>
-            </div>
-
             <!-- Experience -->
             <div class="card fade-in" style="margin-top: 30px">
                 <h2 class="section-title">Kinh Nghiệm Làm Việc</h2>
@@ -2508,6 +2380,10 @@
                                     font-size: 0.95rem;
                                 ">
                             <li>
+                                <strong>Vấn đề:</strong> API chậm khi tải cao, DB gần chạm ngưỡng — phân tích truy vấn
+                                nóng thay vì scale máy chủ.
+                            </li>
+                            <li>
                                 Vận hành ổn định hệ thống ~10 triệu request/ngày, tối ưu API Gateway throughput.
                             </li>
                             <li>Giảm DB load 60% bằng Redis cache-aside.</li>
@@ -2571,7 +2447,7 @@
                                 <path
                                     d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
                             </svg>
-                            Quản lý nhân sự
+                            Quản lý nhân sự &amp; áp dụng Scrum
                         </div>
                         <ul style="
                                     padding-left: 20px;
@@ -2586,6 +2462,15 @@
                             <li>
                                 Mentoring nhân sự mới và ổn định team trong
                                 giai đoạn áp lực cao.
+                            </li>
+                            <li>
+                                <strong>Đào tạo và áp dụng Scrum</strong> khi team làm việc rời rạc:
+                                sprint rõ mục tiêu, daily gỡ vướng sớm, <strong>retrospective</strong>
+                                biến mỗi vấn đề đã xảy ra thành một điều chỉnh cụ thể cho sprint sau.
+                            </li>
+                            <li>
+                                <strong>Kết quả:</strong> tiến độ dự đoán được hơn, mỗi thành viên có
+                                đường phát triển rõ ràng, sai sót cũ không tái diễn.
                             </li>
                         </ul>
                     </div>
@@ -2693,13 +2578,107 @@
                                     color: var(--text-muted);
                                     font-size: 0.95rem;
                                 ">
-                            <li><strong>Vấn đề:</strong> kiểm thử thủ công không theo kịp nhịp release.</li>
+                            <li><strong>Vấn đề:</strong> release hay trễ và lỗi lọt production, gốc rễ là kiểm thử thủ
+                                công không theo kịp nhịp release.</li>
                             <li>Xây <strong>checklist lộ trình học Playwright</strong> theo cấp độ, kèm tiêu chí "đạt"
                                 cho từng bước.</li>
                             <li>Gắn với <strong>career path</strong> rõ ràng: Manual → Automation Tester → SDET → QA
                                 Lead.</li>
-                            <li><strong>Kết quả:</strong> 4 nhân sự đi qua lộ trình, giảm tải kiểm thử tay và giảm
-                                rollback.</li>
+                            <li>Song song chuẩn hóa <strong>CI/CD và checklist release</strong> để chặn lỗi trước khi
+                                lên production.</li>
+                            <li><strong>Kết quả:</strong> 4 nhân sự đi qua lộ trình; tỷ lệ chậm task từ ~30% xuống dưới
+                                10%, giảm rollback.</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-title">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
+                            </svg>
+                            Ứng dụng ký số USB Token (Electron → Go)
+                        </div>
+                        <ul style="
+                                    padding-left: 20px;
+                                    color: var(--text-muted);
+                                    font-size: 0.95rem;
+                                ">
+                            <li><strong>Vấn đề:</strong> bản Electron tiêu tốn nhiều tài nguyên máy trạm và phụ thuộc
+                                thư viện đã lỗi thời — rủi ro bảo mật, khó nâng cấp.</li>
+                            <li><strong>Refactor sang Go</strong>: biên dịch thành một file thực thi gọn, không kéo
+                                theo cả runtime Chromium.</li>
+                            <li>Giao tiếp thiết bị ký số qua thư viện vẫn còn được maintain.</li>
+                            <li><strong>Kết quả:</strong> ứng dụng nhẹ hơn, khởi động nhanh hơn, triển khai và cập nhật
+                                đơn giản hơn cho người dùng cuối.</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-title">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8zm2 2v4h4v-4h-4zM5 5v4h4V5H5zm10 0v4h4V5h-4zM5 15v4h4v-4H5z" />
+                            </svg>
+                            Tách Monolith thành Microservice
+                        </div>
+                        <ul style="
+                                    padding-left: 20px;
+                                    color: var(--text-muted);
+                                    font-size: 0.95rem;
+                                ">
+                            <li><strong>Vấn đề:</strong> sửa một chức năng phải hồi quy cả hệ thống, tốn nhân lực test,
+                                và scale thì phải nhân bản cả khối.</li>
+                            <li><strong>Tách dần sang microservice</strong> theo luồng nghiệp vụ, cô lập phạm vi ảnh
+                                hưởng của mỗi lần nâng cấp.</li>
+                            <li>Giảm khối lượng test hồi quy cho mỗi lần thay đổi.</li>
+                            <li><strong>Kết quả:</strong> bảo trì/nâng cấp không kéo theo cả hệ thống, scale đúng
+                                service đang nghẽn thay vì scale tất cả.</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-title">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 00-5.5-1.65l-.5.67-.5-.68C11 2.55 10.06 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm0 13H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z" />
+                            </svg>
+                            Archive &amp; Migration hệ thống cũ → mới
+                        </div>
+                        <ul style="
+                                    padding-left: 20px;
+                                    color: var(--text-muted);
+                                    font-size: 0.95rem;
+                                ">
+                            <li><strong>Vấn đề:</strong> duy trì song song hai môi trường, hai codebase, hai đội vận
+                                hành — chi phí lớn.</li>
+                            <li><strong>Ghi dữ liệu song song (dual write):</strong> hệ thống mới nhận dữ liệu cùng lúc
+                                với hệ thống cũ cho tới khi đối soát khớp.</li>
+                            <li><strong>Chuyển hướng dịch vụ</strong> sang bản mới rồi mới ngừng bản cũ.</li>
+                            <li><strong>Kết quả:</strong> chuyển đổi không gián đoạn dịch vụ, gỡ được chi phí duy trì
+                                hai môi trường, thống nhất một codebase.</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-title">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 15l-4-4 1.41-1.41L11 13.17l4.59-4.58L17 10l-6 6z" />
+                            </svg>
+                            An toàn thông tin &amp; xử lý pentest
+                        </div>
+                        <ul style="
+                                    padding-left: 20px;
+                                    color: var(--text-muted);
+                                    font-size: 0.95rem;
+                                ">
+                            <li><strong>Vấn đề:</strong> lỗ hổng chỉ được phát hiện khi có đợt pentest.</li>
+                            <li><strong>Xử lý các phát hiện từ pentest:</strong> phân tích nguyên nhân gốc từng lỗ
+                                hổng, vá và kiểm chứng lại.</li>
+                            <li>Soi lại các điểm tương tự trên toàn hệ thống và đề xuất cải tiến trước khi bị chỉ ra.</li>
+                            <li><strong>Kết quả:</strong> chuyển từ "vá khi bị phát hiện" sang rà soát chủ động thường
+                                xuyên, đảm bảo tuân thủ yêu cầu an toàn thông tin.</li>
                         </ul>
                     </div>
                 </div>
