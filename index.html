@@ -447,6 +447,28 @@
             }
         }
 
+        /* Masonry: chiều cao mỗi thẻ tự co theo nội dung, thẻ dưới xếp sát
+           đáy thẻ trên thay vì phải thẳng hàng theo hàng ngang của grid. */
+        .projects-grid--masonry {
+            display: block;
+            column-gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .projects-grid--masonry {
+                column-count: 2;
+            }
+        }
+
+        .projects-grid--masonry>.project-card {
+            break-inside: avoid;
+            -webkit-column-break-inside: avoid;
+            margin: 0 0 20px;
+            /* inline-block ngăn thẻ bị cắt đôi giữa hai cột trên WebKit */
+            display: inline-block;
+            width: 100%;
+        }
+
         .project-card {
             border: 1px solid var(--border-color);
             border-radius: 16px;
@@ -1025,11 +1047,68 @@
                 width: 100% !important;
             }
 
+            /* Card lớn (Kinh nghiệm, Dự án) PHẢI được phép tràn trang.
+               Nếu để break-inside: avoid, một card cao hơn 1 trang sẽ bị đẩy
+               nguyên khối sang trang mới và bỏ trống phần còn lại của trang
+               trước. overflow: hidden cũng chặn phân trang nên phải mở lại. */
             .card {
                 box-shadow: none !important;
                 border: none !important;
                 padding: 10px 0 !important;
+                break-inside: auto;
+                overflow: visible !important;
+            }
+
+            /* Chỉ giữ "không cắt đôi" ở các khối nhỏ, vừa trong một trang. */
+            .project-card,
+            .achievement,
+            .skill-item {
                 break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            /* timeline-item có thể cao gần cả trang: cho phép tràn trang,
+               chỉ giữ nguyên khối phần tiêu đề + vài dòng đầu. */
+            .timeline-item {
+                break-inside: auto;
+            }
+
+            /* Tiêu đề không đứng lẻ ở cuối trang */
+            .section-title,
+            .timeline-header,
+            .project-title {
+                break-after: avoid;
+                page-break-after: avoid;
+            }
+
+            p,
+            li {
+                orphans: 2;
+                widows: 2;
+            }
+
+            /* Multi-column phân trang rất kém khi in — chuyển masonry về lưới
+               2 cột để giữ mật độ chữ, tránh kéo dài PDF thêm cả trang. */
+            .projects-grid,
+            .projects-grid--masonry {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                column-count: initial !important;
+                gap: 12px !important;
+            }
+
+            .projects-grid>.project-card,
+            .projects-grid--masonry>.project-card {
+                display: block !important;
+                width: auto !important;
+                margin: 0 !important;
+                padding: 12px !important;
+            }
+
+            /* Bỏ hiệu ứng fade-in khi in: phần tử chưa "appear" sẽ bị mờ/lệch */
+            .fade-in {
+                opacity: 1 !important;
+                transform: none !important;
             }
 
             .profile-card {
@@ -2151,81 +2230,17 @@
                             <div class="timeline-title">
                                 Tech Lead / Trưởng nhóm kỹ thuật
                             </div>
-                            <div class="timeline-date">2024 – Nay</div>
+                            <div class="timeline-date">2025 – Nay</div>
                         </div>
                         <div class="timeline-company">FPT IS</div>
                         <div class="timeline-content">
+                            <p style="font-style: italic; margin-bottom: 6px;">
+                                Trọng tâm: kiến trúc hệ thống, ứng dụng AI vào sản phẩm và an toàn thông tin.
+                            </p>
                             <ul>
-                                <li>
-                                    Dẫn dắt đội ngũ phát triển và vận hành
-                                    hệ thống doanh nghiệp quy mô lớn.
-                                </li>
-                                <li>
-                                    Review code, đánh giá giải pháp kỹ thuật
-                                    trước khi release production.
-                                </li>
                                 <li>
                                     Tham gia vai trò Solution Architect cho
                                     chức năng mới và nâng cấp hệ thống (Config-driven architecture).
-                                </li>
-                                <li>
-                                    Vận hành, tối ưu hệ thống API ~10 triệu
-                                    request/ngày, thiết kế monitoring alert realtime.
-                                </li>
-                                <li>
-                                    Chuẩn hóa CI/CD giảm rollback bằng cách ứng dụng automation test.
-                                </li>
-                                <li>
-                                    Xây <strong>checklist lộ trình học &amp; career path
-                                        Automation Tester (Playwright)</strong>, đào tạo 4
-                                    nhân sự đi theo lộ trình này để giảm tải kiểm thử
-                                    thủ công.
-                                </li>
-                                <li>
-                                    Giảm DB load 60% bằng Redis cache-aside strategy.
-                                </li>
-                                <li>
-                                    Xây dựng kho tri thức nội bộ bằng
-                                    NotebookLLM, rút ngắn thời gian onboard.
-                                </li>
-                                <li>
-                                    Ban hành coding standard, checklist
-                                    release, quy trình kiểm soát chất lượng.
-                                </li>
-                                <li>
-                                    Ứng dụng n8n để tự động hóa báo cáo và
-                                    quy trình nội bộ.
-                                </li>
-                                <li>
-                                    Ứng dụng <strong>AI computer vision trên luồng
-                                        camera</strong>: phát hiện vật thể/hành vi (ví dụ trẻ
-                                    tỉnh dậy), cảnh báo khi đối tượng đi qua vạch ảo vẽ
-                                    trên màn hình, gắn khung bám theo đối tượng khi di
-                                    chuyển — thay việc trực màn hình bằng cảnh báo theo
-                                    sự kiện.
-                                </li>
-                                <li>
-                                    Dùng AI dựng nhanh các <strong>dashboard vận hành
-                                        ngắn</strong> (filter nhanh, tổng hợp đa chiều, export
-                                    báo cáo Excel) giúp đội ngũ tự lấy số thay vì chờ
-                                    người làm báo cáo.
-                                </li>
-                                <li>
-                                    Kết hợp <strong>n8n + LLM + Vector Database xây pipeline
-                                        RAG</strong> cho trợ lý hỏi–đáp tài liệu nội bộ
-                                    (chunk, embedding, truy hồi ngữ nghĩa, trả lời kèm
-                                    trích dẫn nguồn).
-                                </li>
-                                <li>
-                                    Dùng <strong>Python</strong> dựng service backend và
-                                    service AI xử lý camera nhận diện vật thể, tách riêng
-                                    khỏi hệ thống nghiệp vụ chính.
-                                </li>
-                                <li>
-                                    <strong>Refactor ứng dụng ký số USB Token từ Electron
-                                        sang Go</strong> — bản cũ nặng và phụ thuộc thư viện
-                                    đã lỗi thời; bản Go biên dịch thành một file thực thi
-                                    gọn, dễ triển khai và dễ bảo trì hơn.
                                 </li>
                                 <li>
                                     <strong>Tách monolith thành microservice</strong> theo
@@ -2241,17 +2256,42 @@
                                     codebase.
                                 </li>
                                 <li>
+                                    Ứng dụng <strong>AI computer vision trên luồng
+                                        camera</strong>: phát hiện vật thể/hành vi (ví dụ trẻ
+                                    tỉnh dậy), cảnh báo khi đối tượng đi qua vạch ảo vẽ
+                                    trên màn hình, gắn khung bám theo đối tượng khi di
+                                    chuyển — thay việc trực màn hình bằng cảnh báo theo
+                                    sự kiện.
+                                </li>
+                                <li>
+                                    Kết hợp <strong>n8n + LLM + Vector Database xây pipeline
+                                        RAG</strong> cho trợ lý hỏi–đáp tài liệu nội bộ
+                                    (chunk, embedding, truy hồi ngữ nghĩa, trả lời kèm
+                                    trích dẫn nguồn).
+                                </li>
+                                <li>
+                                    Dùng AI dựng nhanh các <strong>dashboard vận hành
+                                        ngắn</strong> (filter nhanh, tổng hợp đa chiều, export
+                                    báo cáo Excel) giúp đội ngũ tự lấy số thay vì chờ
+                                    người làm báo cáo.
+                                </li>
+                                <li>
+                                    Dùng <strong>Python</strong> dựng service backend và
+                                    service AI xử lý camera nhận diện vật thể, tách riêng
+                                    khỏi hệ thống nghiệp vụ chính.
+                                </li>
+                                <li>
+                                    <strong>Refactor ứng dụng ký số USB Token từ Electron
+                                        sang Go</strong> — bản cũ nặng và phụ thuộc thư viện
+                                    đã lỗi thời; bản Go biên dịch thành một file thực thi
+                                    gọn, dễ triển khai và dễ bảo trì hơn.
+                                </li>
+                                <li>
                                     Tham gia <strong>xử lý các phát hiện từ pentest</strong>
                                     (phân tích nguyên nhân gốc, vá, kiểm chứng lại) và duy
                                     trì thói quen <strong>chủ động rà soát, đề xuất cải
                                         tiến</strong> để hệ thống tuân thủ yêu cầu an toàn
                                     thông tin.
-                                </li>
-                                <li>
-                                    <strong>Đào tạo và áp dụng Scrum</strong> cho đội ngũ
-                                    (sprint goal, daily, review, retrospective) nhằm tối đa
-                                    tiến độ, tạo lộ trình phát triển cho từng người và biến
-                                    mỗi sự cố thành một điều chỉnh cụ thể cho sprint sau.
                                 </li>
                                 <li>
                                     Tích hợp SFTPGo giải quyết bài toán khách hàng đẩy file tích hợp tự động qua SFTP
@@ -2260,12 +2300,76 @@
                                 </li>
                             </ul>
                             <div class="achievement">
+                                <strong>🏆 Thành tích nổi bật:</strong> Hoàn thành
+                                các đợt release quan trọng đúng tiến độ, không phát
+                                sinh incident nghiêm trọng. Đưa AI và kiến trúc
+                                microservice vào vận hành thực tế thay vì dừng ở thử
+                                nghiệm.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="timeline-title">
+                                Tech Lead / Trưởng nhóm kỹ thuật
+                            </div>
+                            <div class="timeline-date">2024 – 2025</div>
+                        </div>
+                        <div class="timeline-company">FPT IS</div>
+                        <div class="timeline-content">
+                            <p style="font-style: italic; margin-bottom: 6px;">
+                                Trọng tâm: hiệu năng hệ thống, chuẩn hóa quy trình và xây dựng đội ngũ.
+                            </p>
+                            <ul>
+                                <li>
+                                    Dẫn dắt đội ngũ phát triển và vận hành
+                                    hệ thống doanh nghiệp quy mô lớn.
+                                </li>
+                                <li>
+                                    Review code, đánh giá giải pháp kỹ thuật
+                                    trước khi release production.
+                                </li>
+                                <li>
+                                    Vận hành, tối ưu hệ thống API ~10 triệu
+                                    request/ngày, thiết kế monitoring alert realtime.
+                                </li>
+                                <li>
+                                    Giảm DB load 60% bằng Redis cache-aside strategy.
+                                </li>
+                                <li>
+                                    Chuẩn hóa CI/CD giảm rollback bằng cách ứng dụng automation test.
+                                </li>
+                                <li>
+                                    Xây <strong>checklist lộ trình học &amp; career path
+                                        Automation Tester (Playwright)</strong>, đào tạo 4
+                                    nhân sự đi theo lộ trình này để giảm tải kiểm thử
+                                    thủ công.
+                                </li>
+                                <li>
+                                    <strong>Đào tạo và áp dụng Scrum</strong> cho đội ngũ
+                                    (sprint goal, daily, review, retrospective) nhằm tối đa
+                                    tiến độ, tạo lộ trình phát triển cho từng người và biến
+                                    mỗi sự cố thành một điều chỉnh cụ thể cho sprint sau.
+                                </li>
+                                <li>
+                                    Ban hành coding standard, checklist
+                                    release, quy trình kiểm soát chất lượng.
+                                </li>
+                                <li>
+                                    Ứng dụng n8n để tự động hóa báo cáo và
+                                    quy trình nội bộ.
+                                </li>
+                                <li>
+                                    Xây dựng kho tri thức nội bộ bằng
+                                    NotebookLLM, rút ngắn thời gian onboard.
+                                </li>
+                            </ul>
+                            <div class="achievement">
                                 <strong>🏆 Thành tích nổi bật:</strong> Giảm
                                 tỷ lệ chậm task từ ~30% xuống dưới 10% sau 2
-                                tháng. Hoàn thành các đợt release quan trọng
-                                đúng tiến độ, không phát sinh incident
-                                nghiêm trọng. Tối ưu năng suất team và chi
-                                phí nhân sự onboarding.
+                                tháng. Tối ưu năng suất team và chi phí nhân sự
+                                onboarding.
                             </div>
                         </div>
                     </div>
@@ -2366,7 +2470,7 @@
             <!-- Projects -->
             <div class="card fade-in" style="margin-top: 30px">
                 <h2 class="section-title">Dự Án / Kết Quả Nổi Bật</h2>
-                <div class="projects-grid">
+                <div class="projects-grid projects-grid--masonry">
                     <div class="project-card">
                         <div class="project-title">
                             <svg viewBox="0 0 24 24">
