@@ -1059,12 +1059,21 @@
                 overflow: visible !important;
             }
 
-            /* Chỉ giữ "không cắt đôi" ở các khối nhỏ, vừa trong một trang. */
+            /* Chỉ giữ "không cắt đôi" ở các khối nhỏ, vừa trong một trang.
+               .skill-group phải nguyên khối, nếu không tiêu đề nhóm sẽ nằm
+               cuối trang này còn các tag rơi sang trang sau. */
             .project-card,
             .achievement,
-            .skill-item {
+            .skill-item,
+            .skill-group,
+            .tags {
                 break-inside: avoid;
                 page-break-inside: avoid;
+            }
+
+            .skill-group-title {
+                break-after: avoid;
+                page-break-after: avoid;
             }
 
             /* timeline-item có thể cao gần cả trang: cho phép tràn trang,
@@ -1087,22 +1096,35 @@
                 widows: 2;
             }
 
-            /* Multi-column phân trang rất kém khi in — chuyển masonry về lưới
-               2 cột để giữ mật độ chữ, tránh kéo dài PDF thêm cả trang. */
+            /* Khi in: bỏ hẳn lưới/multi-column cho phần Dự án.
+               Lưới 2 cột bắt các thẻ cùng hàng phải thẳng hàng nên thẻ ngắn
+               để lại khoảng trắng lệch nhau, và cả hàng không vừa trang thì
+               đẩy xuống trang sau tạo dải trống lớn. Đổ thành block một cột
+               rộng đều nhau, mỗi thẻ là một khối nguyên vẹn. */
             .projects-grid,
             .projects-grid--masonry {
-                display: grid !important;
-                grid-template-columns: 1fr 1fr !important;
+                display: block !important;
+                grid-template-columns: none !important;
                 column-count: initial !important;
-                gap: 12px !important;
+                columns: auto !important;
+                gap: 0 !important;
             }
 
             .projects-grid>.project-card,
             .projects-grid--masonry>.project-card {
                 display: block !important;
-                width: auto !important;
-                margin: 0 !important;
-                padding: 12px !important;
+                width: 100% !important;
+                margin: 0 0 10px !important;
+                padding: 12px 14px !important;
+            }
+
+            /* bù mật độ đã mất khi về một cột */
+            .project-card ul {
+                margin: 4px 0 0 !important;
+            }
+
+            .project-card li {
+                margin-bottom: 2px !important;
             }
 
             /* Bỏ hiệu ứng fade-in khi in: phần tử chưa "appear" sẽ bị mờ/lệch */
