@@ -469,6 +469,23 @@
             width: 100%;
         }
 
+        /* html2canvas 1.4.1 KHÔNG dựng được CSS multi-column: nó bỏ mất các
+           text node thường và chỉ vẽ <strong>, làm thẻ trông trống rỗng.
+           Vì vậy khi xuất PDF/ảnh phải tắt masonry, trả về lưới 2 cột. */
+        body.exporting .projects-grid--masonry {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-count: initial;
+            columns: auto;
+            gap: 20px;
+        }
+
+        body.exporting .projects-grid--masonry>.project-card {
+            display: block;
+            width: auto;
+            margin: 0;
+        }
+
         .project-card {
             border: 1px solid var(--border-color);
             border-radius: 16px;
@@ -1050,6 +1067,13 @@
 
         /* ===== PRINT STYLES ===== */
         @media print {
+
+            /* Khoảng thở ở mép trên/dưới mỗi trang, để khối bị đẩy sang trang
+               mới không dính tịt vào mép giấy. */
+            @page {
+                margin: 14mm 10mm;
+            }
+
             body {
                 background-color: white !important;
                 color: black !important;
@@ -3241,6 +3265,10 @@
                 if (el) el.style.display = "none"
             })
 
+            // Tắt masonry (CSS multi-column) — html2canvas không dựng được nó,
+            // để nguyên thì các thẻ Dự án bị mất chữ, chỉ còn phần <strong>.
+            document.body.classList.add("exporting")
+
             // Tạm thời hiển thị tất cả nội dung ẩn do lazy loading
             const hiddenElements = document.querySelectorAll(
                 ".fade-in",
@@ -3313,8 +3341,17 @@
                             const canvasWidth = 1200 * scale + paddingCanvas * 2; // 1920
                             const pagePxOnCanvas = canvasWidth * (297 / 210); // 2715.428
 
+                            // Khoảng thở ở đầu trang mới cho phần tử bị đẩy xuống,
+                            // để nó không dính tịt vào mép trên của trang.
+                            const TOP_GAP_MM = 12;
+                            const pxPerMmCanvas = canvasWidth / 210;
+                            const topGapDOM = (TOP_GAP_MM * pxPerMmCanvas) / scale;
+
+                            // .skill-group / .achievement phải có trong danh sách này,
+                            // nếu không các nhóm tag ở cột trái bị lưỡi dao cắt trang
+                            // chém ngang (tiêu đề nhóm mất nửa trên).
                             const elements = clonedContainer.querySelectorAll(
-                                ".card, .profile-card, .contact-item, .skill-category, .timeline-item, .project-card, .language-item, .qr-code-card"
+                                ".card, .profile-card, .contact-item, .skill-category, .timeline-item, .project-card, .language-item, .qr-code-card, .skill-group, .achievement"
                             );
 
                             elements.forEach((el) => {
@@ -3335,8 +3372,12 @@
                                 const pageNumber = Math.floor(elTopCanvas / pagePxOnCanvas);
                                 const bottomPageNumber = Math.floor(elBottomCanvas / pagePxOnCanvas);
 
-                                // Nếu phần tử bị vắt ngang qua 2 trang, và bản thân nó không dài hơn 1 trang
-                                if (bottomPageNumber > pageNumber && (elBottomCanvas - elTopCanvas) < pagePxOnCanvas * 0.8) {
+                                // Nếu phần tử bị vắt ngang qua 2 trang, và bản thân nó
+                                // vẫn đủ chỗ trong một trang sau khi cộng khoảng thở
+                                const elHeightCanvas = elBottomCanvas - elTopCanvas;
+                                const fitsWithGap = elHeightCanvas + TOP_GAP_MM * pxPerMmCanvas < pagePxOnCanvas * 0.92;
+
+                                if (bottomPageNumber > pageNumber && fitsWithGap) {
                                     // Tính khoảng cách cần đẩy xuống (theo toạ độ canvas)
                                     const nextPageTopCanvas = (pageNumber + 1) * pagePxOnCanvas;
                                     const pushAmountCanvas = nextPageTopCanvas - elTopCanvas;
@@ -3348,8 +3389,8 @@
                                     const computedStyle = clonedDoc.defaultView ? clonedDoc.defaultView.getComputedStyle(el) : window.getComputedStyle(el);
                                     const currentMargin = parseFloat(computedStyle.marginTop) || 0;
 
-                                    // Thêm 40px padding an toàn để phần tử nằm trọn vẹn ở đầu trang mới
-                                    el.style.marginTop = `${currentMargin + pushAmountDOM + 40}px`;
+                                    // Đẩy tới đầu trang sau, rồi cộng khoảng thở
+                                    el.style.marginTop = `${currentMargin + pushAmountDOM + topGapDOM}px`;
                                 }
                             });
                         } catch (error) {
@@ -3380,6 +3421,9 @@
                         elementsToHide.forEach((el) => {
                             if (el) el.style.display = ""
                         })
+
+                        // Bật lại masonry trên màn hình
+                        document.body.classList.remove("exporting")
 
                         // Khôi phục transition
                         hiddenElements.forEach((el) => {
@@ -3476,6 +3520,9 @@
                         elementsToHide.forEach((el) => {
                             if (el) el.style.display = ""
                         })
+
+                        // Bật lại masonry trên màn hình
+                        document.body.classList.remove("exporting")
 
                         // Khôi phục theme
                         if (currentTheme === "dark") {
@@ -3988,6 +4035,10 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                 if (el) el.style.display = "none"
             })
 
+            // Tắt masonry (CSS multi-column) — html2canvas không dựng được nó,
+            // để nguyên thì các thẻ Dự án bị mất chữ, chỉ còn phần <strong>.
+            document.body.classList.add("exporting")
+
             // Tạm thời hiển thị tất cả nội dung ẩn do lazy loading
             const hiddenElements = document.querySelectorAll(
                 ".fade-in",
@@ -4075,6 +4126,9 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                             if (el) el.style.display = ""
                         })
 
+                        // Bật lại masonry trên màn hình
+                        document.body.classList.remove("exporting")
+
                         // Khôi phục transition
                         hiddenElements.forEach((el) => {
                             el.style.transition = ""
@@ -4122,6 +4176,9 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                         elementsToHide.forEach((el) => {
                             if (el) el.style.display = ""
                         })
+
+                        // Bật lại masonry trên màn hình
+                        document.body.classList.remove("exporting")
 
                         // Khôi phục theme
                         if (currentTheme === "dark") {
