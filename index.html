@@ -566,6 +566,27 @@
             overflow: hidden;
         }
 
+        /* Cuộn xuống thì mờ đi, giống .fab-container */
+        .translate-widget.scrolled-down {
+            opacity: 0.35;
+        }
+
+        /* Trỏ vào hoặc đang mở dropdown thì hiện lại rõ */
+        .translate-widget:hover,
+        .translate-widget:focus-within {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+
+        /* Điện thoại không có hover: cuộn xuống là trong suốt hoàn toàn,
+           và tắt pointer-events để nó không chắn thao tác khi đang vô hình. */
+        @media (max-width: 767px) {
+            .translate-widget.scrolled-down {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
         /* --- HIDE ALL GOOGLE TRANSLATE POPUPS & BANNERS --- */
         .goog-te-banner-frame.skiptranslate,
         .skiptranslate>iframe:not(.goog-te-menu-frame),
@@ -4152,17 +4173,23 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                 scrollTopBtn.style.display = "none"
             }
 
-            // FAB Container Opacity Logic
-            const fabContainer = document.querySelector(".fab-container");
-            if (fabContainer) {
+            // FAB + widget chọn ngôn ngữ: mờ khi cuộn xuống, rõ lại khi cuộn lên
+            const fadeOnScroll = [
+                document.querySelector(".fab-container"),
+                document.querySelector(".translate-widget"),
+            ].filter(Boolean);
+
+            if (fadeOnScroll.length) {
                 const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-                if (currentScroll > lastScrollTop && currentScroll > 100) {
-                    // Scrolling down - make slightly transparent
-                    fabContainer.classList.add("scrolled-down");
-                } else {
-                    // Scrolling up - make fully visible
-                    fabContainer.classList.remove("scrolled-down");
-                }
+                const scrollingDown = currentScroll > lastScrollTop && currentScroll > 100;
+                fadeOnScroll.forEach((el) => {
+                    // đang mở dropdown ngôn ngữ thì không làm mờ
+                    if (el.contains(document.activeElement)) {
+                        el.classList.remove("scrolled-down");
+                        return;
+                    }
+                    el.classList.toggle("scrolled-down", scrollingDown);
+                });
                 lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
             }
         })
