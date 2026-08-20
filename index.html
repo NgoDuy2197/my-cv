@@ -694,6 +694,7 @@
         }
 
         .export-dialog-content {
+            position: relative;
             background: var(--surface-color);
             border-radius: 15px;
             padding: 20px;
@@ -704,6 +705,31 @@
                 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             transform: scale(0.9);
             transition: all 0.3s ease;
+        }
+
+        /* Nut X dong hop thoai, dat o goc tren-phai cua hop thoai */
+        .dialog-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 50%;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dialog-close-btn:hover {
+            background: var(--bg-color);
+            color: var(--text-main);
         }
 
         .export-dialog.show .export-dialog-content {
@@ -1860,6 +1886,7 @@
     <!-- Music Welcome Dialog -->
     <div class="export-dialog" id="music-welcome-dialog">
         <div class="export-dialog-content" style="max-width: 420px; text-align: center;">
+            <button class="dialog-close-btn" id="music-decline-btn" type="button" aria-label="Đóng">&#10005;</button>
             <div style="font-size: 3rem; margin-bottom: 15px;">🎵</div>
             <h3 class="export-dialog-title" style="margin-bottom: 10px;">Chào mừng bạn ghé thăm!</h3>
             <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6;">
@@ -1868,9 +1895,6 @@
             <div class="export-dialog-buttons" style="flex-direction: column; gap: 10px; width: 100%;">
                 <button class="export-dialog-btn export-dialog-btn-primary" id="music-accept-btn" style="width: 100%; padding: 14px;">
                     🎹 Thưởng thức
-                </button>
-                <button class="export-dialog-btn export-dialog-btn-secondary" id="music-decline-btn" style="width: 100%; padding: 12px; border: none; background: transparent; color: var(--text-muted);">
-                    Để sau 🎻
                 </button>
             </div>
         </div>
