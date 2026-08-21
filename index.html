@@ -1456,12 +1456,18 @@
         /* Screen Wrapper (CRT tube style bezel) */
         .retro-tv-screen-wrapper {
             flex: 1;
+            /* Ti le 4:3 dat o day vi day la vung kinh nguoi dung thay la "man hinh".
+               align-self: flex-start de flex cua tu khong keo gian chieu cao no
+               theo cot num dieu khien ben canh (se lam ti le sai). */
+            aspect-ratio: 4 / 3;
+            align-self: flex-start;
             background: #1e1e1e;
             border: 6px solid #1a1a1a;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8);
             position: relative;
+            box-sizing: border-box;
         }
         /* Screen overlay for classic glass CRT reflection curve */
         .retro-tv-screen-wrapper::after {
@@ -1478,7 +1484,7 @@
 
         .youtube-music-iframe-wrapper {
             width: 100%;
-            height: 180px; /* Highly compact! */
+            height: 100%;
             background-color: #000;
         }
 
@@ -1486,6 +1492,8 @@
             width: 100%;
             height: 100%;
             border: 0;
+            /* display: block de bo khoang trong duoi anh cua inline element */
+            display: block;
         }
 
         /* TV Control Panel */
@@ -1508,8 +1516,8 @@
         }
 
         .retro-tv-knob {
-            width: 26px;
-            height: 26px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: #1a1a1a;
             border: 2px solid #5d4037;
@@ -1674,7 +1682,14 @@
             0% { transform: translate3d(0, 0, 0) scale(0.55); opacity: 0; }
             12% { opacity: 1; }
             80% { opacity: 0.9; }
-            100% { transform: translate3d(var(--dx, 0px), -215px, 0) scale(1.2); opacity: 0; }
+            100% { transform: translate3d(var(--dx, 0px), var(--rise, -240px), 0) scale(1.2); opacity: 0; }
+        }
+
+        /* Tim tĩnh: dùng khi người dùng bật "giảm hiệu ứng động".
+           Không bay, chỉ hiện tại chỗ để kênh 4 vẫn có nội dung. */
+        .tv-heart--static {
+            bottom: auto;
+            opacity: 0.95;
         }
 
         /* Nhãn số kênh */
@@ -1702,11 +1717,25 @@
 
         /* Núm xoay: có hiệu ứng xoay khi bấm */
         .retro-tv-knob {
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        /* Trên desktop núm là hình tròn nhỏ màu tối, rất dễ bị nhìn thành hoạ
+           tiết trang trí. Thêm phản hồi khi trỏ vào để thấy rõ đây là nút bấm. */
+        .retro-tv-knob:hover {
+            filter: brightness(1.5);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35), 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .retro-tv-knob:focus-visible {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 3px;
         }
 
         .retro-tv-knob:active {
             filter: brightness(1.4);
+            transform: scale(0.92);
         }
 
         /* TV rơi khỏi màn hình rồi DỪNG HẲN (không animate vô hạn) */
@@ -1735,12 +1764,28 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
+
+            /* Nhiễu kênh 2: bỏ nhấp nháy nhưng GIỮ hoạ tiết nhiễu tĩnh,
+               không để màn hình thành một mảng đen phẳng. */
             #tv-ch-static::before,
-            #tv-ch-static::after,
-            .tv-heart,
+            #tv-ch-static::after {
+                animation: none !important;
+            }
+
+            /* Rơi TV: bỏ cú rơi dài, thay bằng mờ dần ngắn — người dùng vẫn
+               thấy TV biến đi thay vì nó mất tăm trong 1 khung hình. */
             .youtube-music-container.tv-falling {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
+                animation: tv-fade-away 0.5s ease forwards !important;
+            }
+
+            @keyframes tv-fade-away {
+                from { opacity: 1; transform: none; }
+                to { opacity: 0; transform: translateY(24px); }
+            }
+
+            /* Tim kênh 4 do JS đặt tĩnh, không dùng animation nữa */
+            .tv-heart {
+                animation: none !important;
             }
         }
 
@@ -3960,6 +4005,19 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
             const HEART_CHARS = ["❤️", "💖", "💕", "💗", "🩷", "💘"];
             const MAX_HEARTS = 16;          // trần cứng, tránh phình DOM gây giật
 
+            // Khi người dùng bật "giảm hiệu ứng động" (Windows: tắt Show animations),
+            // mọi animation bị bóp còn ~0ms. Tim bay dựa vào animation nên vừa sinh ra
+            // là animationend bắn ngay và bị gỡ khỏi DOM -> kênh 4 trống trơn. Vì vậy
+            // ở chế độ này ta vẽ tim TĨNH, không dùng animation.
+            const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+            // Tim bay cao bằng chiều cao màn hình + chút dư, thay vì một số cứng —
+            // để còn đúng khi màn hình đổi tỉ lệ/kích thước (4:3, mobile...).
+            function riseDistance() {
+                const h = heartsLayer ? heartsLayer.clientHeight : 0;
+                return -((h || 180) + 45) + "px";
+            }
+
             function spawnHeart() {
                 if (!heartsLayer) return;
                 // Không sinh thêm nếu đang quá tải hoặc tab bị ẩn
@@ -3972,6 +4030,7 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                 el.style.left = (8 + Math.random() * 84) + "%";
                 el.style.fontSize = (13 + Math.random() * 12).toFixed(0) + "px";
                 el.style.setProperty("--dx", (Math.random() * 60 - 30).toFixed(0) + "px");
+                el.style.setProperty("--rise", riseDistance());
                 el.style.animationDuration = (2.6 + Math.random() * 1.6).toFixed(2) + "s";
 
                 // Hết animation là ra khỏi khung TV -> gỡ khỏi DOM ngay.
@@ -3980,7 +4039,31 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                 heartsLayer.appendChild(el);
             }
 
+            // Tim tĩnh: rải một lượt rồi để yên, không hẹn giờ, không cần animation
+            function renderStaticHearts() {
+                if (!heartsLayer) return;
+                heartsLayer.innerHTML = "";
+                const spots = [
+                    [12, 18], [30, 62], [48, 26], [66, 70],
+                    [22, 44], [56, 12], [78, 40], [40, 82],
+                    [8, 74], [88, 66],
+                ];
+                spots.forEach(([leftPct, topPct], i) => {
+                    const el = document.createElement("span");
+                    el.className = "tv-heart tv-heart--static";
+                    el.textContent = HEART_CHARS[i % HEART_CHARS.length];
+                    el.style.left = leftPct + "%";
+                    el.style.top = topPct + "%";
+                    el.style.fontSize = (14 + (i % 4) * 4) + "px";
+                    heartsLayer.appendChild(el);
+                });
+            }
+
             function startHearts() {
+                if (reducedMotion.matches) {
+                    renderStaticHearts();
+                    return;
+                }
                 if (heartTimer) return;
                 for (let i = 0; i < 4; i++) setTimeout(spawnHeart, i * 180);
                 heartTimer = setInterval(spawnHeart, 380);
@@ -4077,6 +4160,7 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
 
             // Tab bị ẩn thì ngừng sinh tim cho đỡ tốn CPU, quay lại thì chạy tiếp
             document.addEventListener("visibilitychange", () => {
+                if (reducedMotion.matches) return;   // tim tĩnh, không tốn CPU
                 if (document.hidden) {
                     clearInterval(heartTimer);
                     heartTimer = null;
@@ -4084,6 +4168,13 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                     && !tvContainer.classList.contains("tv-gone")) {
                     startHearts();
                 }
+            });
+
+            // Người dùng đổi thiết lập hiệu ứng động giữa lúc đang xem thì vẽ lại
+            reducedMotion.addEventListener("change", () => {
+                if (CHANNELS[channelIndex].id !== 4) return;
+                stopHearts();
+                startHearts();
             });
 
             window.restoreRetroTV = restoreTV;
