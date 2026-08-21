@@ -1718,16 +1718,15 @@
         /* Núm xoay: có hiệu ứng xoay khi bấm */
         .retro-tv-knob {
             transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.2s ease, filter 0.2s ease;
+                filter 0.2s ease;
         }
 
-        /* Trên desktop núm là hình tròn nhỏ màu tối, rất dễ bị nhìn thành hoạ
-           tiết trang trí. Thêm phản hồi khi trỏ vào để thấy rõ đây là nút bấm. */
+        /* Trỏ vào chỉ sáng nhẹ lên, không viền phát sáng */
         .retro-tv-knob:hover {
-            filter: brightness(1.5);
-            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35), 0 2px 4px rgba(0, 0, 0, 0.5);
+            filter: brightness(1.4);
         }
 
+        /* Giữ viền cho người dùng bàn phím (chỉ hiện khi tab tới, không hiện khi bấm chuột) */
         .retro-tv-knob:focus-visible {
             outline: 2px solid var(--primary-color);
             outline-offset: 3px;
