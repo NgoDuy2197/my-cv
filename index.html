@@ -3898,10 +3898,69 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
             dialog.classList.remove("show")
         }
 
-        function exportSelected() {
+        // Google Translate chỉ dịch phần đã lọt vào khung nhìn -> phần chưa cuộn tới vẫn là tiếng Việt trong DOM.
+        // Trước khi xuất: cuộn nhanh qua toàn trang để nó dịch hết, đợi DOM ngừng thay đổi rồi mới đọc nội dung.
+        function isPageTranslated() {
+            const c = document.documentElement.classList
+            return c.contains("translated-ltr") || c.contains("translated-rtl")
+        }
+
+        function waitDomQuiet(quietMs, maxMs) {
+            return new Promise((resolve) => {
+                let quietTimer = null
+                let capTimer = null
+                let obs = null
+                const finish = () => {
+                    try { if (obs) obs.disconnect() } catch (e) { /* ignore */ }
+                    clearTimeout(quietTimer)
+                    clearTimeout(capTimer)
+                    resolve()
+                }
+                try {
+                    obs = new MutationObserver(() => {
+                        clearTimeout(quietTimer)
+                        quietTimer = setTimeout(finish, quietMs)
+                    })
+                    obs.observe(document.querySelector(".container") || document.body, {
+                        subtree: true, childList: true, characterData: true,
+                    })
+                } catch (e) { /* không có MutationObserver: chỉ đợi cố định */ }
+                quietTimer = setTimeout(finish, quietMs)
+                capTimer = setTimeout(finish, maxMs)
+            })
+        }
+
+        async function ensureFullyTranslated() {
+            if (!isPageTranslated()) return
+            const root = document.documentElement
+            const prevY = window.scrollY
+            const prevBehavior = root.style.scrollBehavior
+            window.__cvAutoScroll = true // tracker bỏ qua lần cuộn tự động này
+            try {
+                showToast("Đang dịch toàn bộ trang trước khi xuất...")
+                root.style.scrollBehavior = "auto"
+                const step = Math.max(300, Math.floor(window.innerHeight * 0.8))
+                const maxY = root.scrollHeight
+                for (let y = 0; y <= maxY + step; y += step) {
+                    window.scrollTo(0, y)
+                    await new Promise((r) => setTimeout(r, 150))
+                }
+                await waitDomQuiet(800, 8000)
+            } catch (e) {
+                /* lỗi thì vẫn xuất với nội dung hiện có */
+            } finally {
+                window.scrollTo(0, prevY)
+                root.style.scrollBehavior = prevBehavior
+                setTimeout(() => { window.__cvAutoScroll = false }, 300)
+            }
+        }
+
+        async function exportSelected() {
             const selected = document.querySelector(".export-option.selected")
             const selectedFormat = selected ? selected.getAttribute("data-format") : "pdf"
             closeExportDialog()
+
+            await ensureFullyTranslated()
 
             try {
                 if (typeof window.cvTrack === "function") window.cvTrack("export", selectedFormat)
@@ -5198,6 +5257,7 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                 // ---- Lắng nghe ----
                 const onScroll = () => {
                     try {
+                        if (window.__cvAutoScroll) return; // cuộn tự động khi xuất bản dịch
                         const p = scrollPct();
                         if (p > state.maxScroll) state.maxScroll = p;
                         if ((window.scrollY || 0) > 30) state.scrolled = true;
@@ -5228,7 +5288,7 @@ Tôi tên là Duy, tôi thích nghiên cứu công nghệ, chủ động tối �
                     const seen = new Set();
                     const io = new IntersectionObserver((entries) => {
                         entries.forEach((en) => {
-                            if (!en.isIntersecting) return;
+                            if (!en.isIntersecting || window.__cvAutoScroll) return;
                             const key = en.target.getAttribute("data-pdf");
                             if (seen.has(key)) return;
                             seen.add(key);
